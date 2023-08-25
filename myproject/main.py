@@ -41,7 +41,7 @@ def create_username(username: schemas.usernameCreate, db: Session = Depends(get_
 # Update username
 @app.put("/username/put/{leagueId}", response_model=schemas.username)
 async def update_usernames(username: schemas.usernameCreate, db: Session = Depends(get_database),
-    leagueId: int = Path(ge=0, le=30)):
+    leagueId: int = Path(ge=0, le=30, default=1)):
     return crud.update_usernames(db=db, username=username, leagueId=leagueId)
 
 # Create Champion
@@ -51,7 +51,7 @@ def create_champion(champion: schemas.championCreate, db: Session = Depends(get_
 
 # Delete Champion
 @app.delete("/delete/champion/{championId}", response_model=schemas.champion)
-async def delete_champion(championId: int = Path(ge=0, le=30), db: Session = Depends(get_database)):
+async def delete_champion(championId: int = Path(ge=0, le=30, default=1), db: Session = Depends(get_database)):
     deleted_champion = crud.get_champion_by_Id(db, championId=championId)
     if deleted_champion is None:
         raise HTTPException(status_code=404, detail="Champion not found")
