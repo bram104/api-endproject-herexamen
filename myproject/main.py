@@ -27,7 +27,7 @@ def get_database():
     finally:
         db.close()
 
-
+# Create username
 @app.post("/post/username/", response_model=schemas.username)
 def create_username(username: schemas.usernameCreate, db: Session = Depends(get_database)):
     get_user_by_ign = crud.get_user_by_ign(db, in_game_name=username.in_game_name)
@@ -38,18 +38,18 @@ def create_username(username: schemas.usernameCreate, db: Session = Depends(get_
         raise HTTPException(status_code=400, detail="User already exist")
     return crud.create_usernames(db=db, username=username)
 
-
+# Update username
 @app.put("/username/put/{leagueId}", response_model=schemas.username)
 async def update_usernames(username: schemas.usernameCreate, db: Session = Depends(get_database),
     leagueId: int = Path(ge=0, le=30)):
     return crud.update_usernames(db=db, username=username, leagueId=leagueId)
 
-
+# Create Champion
 @app.post("/post/champion/", response_model=schemas.champion)
 def create_champion(champion: schemas.championCreate, db: Session = Depends(get_database)):
     return crud.create_champion(db, champion=champion)
 
-
+# Delete Champion
 @app.delete("/delete/champion/{championId}", response_model=schemas.champion)
 async def delete_champion(championId: int = Path(ge=0, le=30), db: Session = Depends(get_database)):
     deleted_champion = crud.get_champion_by_Id(db, championId=championId)
@@ -58,11 +58,12 @@ async def delete_champion(championId: int = Path(ge=0, le=30), db: Session = Dep
     crud.delete_champion(db=db, championId=championId)
     return deleted_champion
 
+# Get all usernames
 @app.get("/usernames/all/", response_model=list[schemas.username])
 def read_users(db: Session = Depends(get_database)):
     return crud.get_all_usernames(db=db)
 
-
+# Get username by leagueId
 @app.get("/username/{leagueId}", response_model=schemas.username)
 def read_user(leagueId: int, db: Session = Depends(get_database)):
     username_by_id = crud.get_username_by_Id(db, leagueId=leagueId)
@@ -70,7 +71,7 @@ def read_user(leagueId: int, db: Session = Depends(get_database)):
         raise HTTPException(status_code=404, detail="User not found")
     return username_by_id
 
-
+# Get username by gamemodeId
 @app.get("/gamemode/{gamemodeId}", response_model=schemas.gamemode)
 def get_gamemode(gamemodeId: int,db: Session = Depends(get_database)):
     gamemodeId = crud.get_gamemode_by_Id(db=db, gamemodeId=gamemodeId)
